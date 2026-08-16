@@ -90,8 +90,8 @@ target_compile_options(qqbot_lib PRIVATE -Wall -Wextra -Wpedantic)
 
 add_executable(qqbot
   src/main.cpp
-  src/plugins/default_plugin.cpp
-  src/plugins/image_plugin.cpp
+  plugins/default_plugin.cpp
+  plugins/image_plugin.cpp
 )
 target_link_libraries(qqbot PRIVATE qqbot_lib)
 target_compile_options(qqbot PRIVATE -Wall -Wextra -Wpedantic)
@@ -110,6 +110,7 @@ find_program(CLANG_FORMAT_EXECUTABLE clang-format)
 if(CLANG_FORMAT_EXECUTABLE)
   file(GLOB_RECURSE FORMAT_SOURCES CONFIGURE_DEPENDS
     ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/plugins/*.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/*.h
     ${CMAKE_CURRENT_SOURCE_DIR}/tests/*.cpp
