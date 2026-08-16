@@ -3,7 +3,7 @@
 namespace qqbot {
 namespace {
 
-class DefaultPlugin final : public Plugin {
+class EchoPlugin final : public Plugin {
  public:
   bool CanHandle(const Message&) const override { return true; }
 
@@ -12,8 +12,8 @@ class DefaultPlugin final : public Plugin {
   }
 };
 
-DefaultPlugin default_plugin;
-PluginRegister default_plugin_register("default", &default_plugin);
+EchoPlugin echo_plugin;
+PluginRegister echo_plugin_register("default", &echo_plugin);
 
 }  // namespace
 }  // namespace qqbot

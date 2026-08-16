@@ -88,11 +88,8 @@ target_link_libraries(qqbot_lib
 )
 target_compile_options(qqbot_lib PRIVATE -Wall -Wextra -Wpedantic)
 
-add_executable(qqbot
-  src/main.cpp
-  plugins/default_plugin.cpp
-  plugins/image_plugin.cpp
-)
+file(GLOB PLUGIN_SOURCES CONFIGURE_DEPENDS plugins/*.cpp)
+add_executable(qqbot src/main.cpp ${PLUGIN_SOURCES})
 target_link_libraries(qqbot PRIVATE qqbot_lib)
 target_compile_options(qqbot PRIVATE -Wall -Wextra -Wpedantic)
 
