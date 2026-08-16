@@ -1,7 +1,6 @@
 #include <cstdlib>
 #include <exception>
 #include <iostream>
-#include <string>
 
 #include "qqbot/client.h"
 #include "qqbot/plugin.h"
@@ -17,21 +16,14 @@ int main() {
   try {
     qqbot::Client client(app_id, client_secret);
     client.OnMessage([&client](const qqbot::Message& message) {
-      std::string selected_plugin = "default";
-      auto& plugins = qqbot::Plugins();
-      for (const auto& [name, plugin] : plugins) {
-        if (name != "default" && plugin->CanHandle(message)) {
-          selected_plugin = name;
-          break;
+      for (const auto& [name, plugin] : qqbot::Plugins()) {
+        if (plugin->CanHandle(message)) {
+          plugin->OnMessage(client, message);
+          return;
         }
       }
-
-      const auto plugin = plugins.find(selected_plugin);
-      if (plugin == plugins.end()) {
-        std::cerr << "Unknown plugin: " << selected_plugin << '\n';
-        return;
-      }
-      plugin->second->OnMessage(client, message);
+      // 兜底回复：
+      client.Reply(message, "收到，但是暂时处理不了，等待升级");
     });
     client.Run();
   } catch (const std::exception& error) {
