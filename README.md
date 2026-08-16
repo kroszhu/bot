@@ -26,8 +26,8 @@ cp config.example.toml config.toml
 The process connects automatically and echoes supported incoming text. Stop it
 with `Ctrl+C`.
 
-Use `read` to read `data.txt`, or `write text` to overwrite it. File content is
-limited to 1024 bytes.
+Use `help` to view the available commands, `read` to read `data.txt`, or
+`write text` to overwrite it. File content is limited to 1024 bytes.
 
 The `plugins.order` array controls plugin matching order. Each message is routed
 to the first plugin whose `CanHandle` method returns true. New plugins inherit
