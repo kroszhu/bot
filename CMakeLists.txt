@@ -86,19 +86,27 @@ target_compile_definitions(ixwebsocket
   PRIVATE IXWEBSOCKET_USE_MBED_TLS_MIN_VERSION_3
 )
 
-add_library(qqbot_lib src/client.cpp src/plugin.cpp src/protocol.cpp)
+add_library(qqbot_lib
+  src/client.cpp
+  src/config.cpp
+  src/plugin.cpp
+  src/protocol.cpp
+)
 target_include_directories(qqbot_lib
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
   PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 target_link_libraries(qqbot_lib
-  PRIVATE ixwebsocket nlohmann_json::nlohmann_json
+  PRIVATE
+    ixwebsocket
+    nlohmann_json::nlohmann_json
+    tomlplusplus::tomlplusplus
 )
 target_compile_options(qqbot_lib PRIVATE -Wall -Wextra -Wpedantic)
 
 file(GLOB PLUGIN_SOURCES CONFIGURE_DEPENDS plugins/*.cpp)
 add_executable(qqbot src/main.cpp ${PLUGIN_SOURCES})
-target_link_libraries(qqbot PRIVATE qqbot_lib tomlplusplus::tomlplusplus)
+target_link_libraries(qqbot PRIVATE qqbot_lib)
 target_compile_options(qqbot PRIVATE -Wall -Wextra -Wpedantic)
 
 enable_testing()
@@ -110,6 +118,15 @@ target_include_directories(protocol_test PRIVATE
 target_link_libraries(protocol_test PRIVATE nlohmann_json::nlohmann_json)
 target_compile_options(protocol_test PRIVATE -Wall -Wextra -Wpedantic -UNDEBUG)
 add_test(NAME protocol_test COMMAND protocol_test)
+
+add_executable(config_test tests/config_test.cpp src/config.cpp)
+target_include_directories(config_test PRIVATE
+  ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
+target_link_libraries(config_test PRIVATE tomlplusplus::tomlplusplus)
+target_compile_options(config_test PRIVATE -Wall -Wextra -Wpedantic -UNDEBUG)
+add_test(NAME config_test COMMAND config_test
+  ${CMAKE_CURRENT_SOURCE_DIR}/tests/config_test.toml)
 
 find_program(CLANG_FORMAT_EXECUTABLE clang-format)
 if(CLANG_FORMAT_EXECUTABLE)
