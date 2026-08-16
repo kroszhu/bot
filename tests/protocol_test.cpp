@@ -19,6 +19,10 @@ int main() {
   assert(resume.at("d").at("session_id") == "session");
   assert(resume.at("d").at("seq") == 7);
 
+  assert(qqbot::internal::ParseExpiresIn({{"expires_in", 7200}}) == 7200);
+  assert(qqbot::internal::ParseExpiresIn({{"expires_in", "7200"}}) == 7200);
+  assert(!qqbot::internal::ParseExpiresIn({{"expires_in", "invalid"}}));
+
   const nlohmann::json direct_payload = {
       {"op", 0},
       {"t", "C2C_MESSAGE_CREATE"},

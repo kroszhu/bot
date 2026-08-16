@@ -1,5 +1,7 @@
 #include "protocol.h"
 
+#include <charconv>
+#include <limits>
 #include <utility>
 
 namespace qqbot::internal {
@@ -24,6 +26,34 @@ nlohmann::json MakeResume(const std::string& access_token,
            {{"token", "QQBot " + access_token},
             {"session_id", session_id},
             {"seq", sequence}}}};
+}
+
+std::optional<int> ParseExpiresIn(const nlohmann::json& response) {
+  const auto expires_it = response.find("expires_in");
+  if (expires_it == response.end()) {
+    return std::nullopt;
+  }
+
+  if (expires_it->is_number_integer()) {
+    const auto value = expires_it->get<std::int64_t>();
+    if (value > 0 && value <= std::numeric_limits<int>::max()) {
+      return static_cast<int>(value);
+    }
+    return std::nullopt;
+  }
+
+  if (expires_it->is_string()) {
+    const std::string value_text = expires_it->get<std::string>();
+    int value = 0;
+    const auto result = std::from_chars(
+        value_text.data(), value_text.data() + value_text.size(), value);
+    if (result.ec == std::errc() &&
+        result.ptr == value_text.data() + value_text.size() && value > 0) {
+      return value;
+    }
+  }
+
+  return std::nullopt;
 }
 
 std::optional<Message> ParseMessage(const nlohmann::json& payload) {

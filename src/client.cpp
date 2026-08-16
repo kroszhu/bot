@@ -118,15 +118,15 @@ class Client::Impl {
 
     const auto result = nlohmann::json::parse(response->body);
     const std::string token = result.value("access_token", "");
-    const int expires_in = result.value("expires_in", 0);
-    if (token.empty() || expires_in <= 0) {
+    const auto expires_in = internal::ParseExpiresIn(result);
+    if (token.empty() || !expires_in) {
       throw std::runtime_error("invalid access token response");
     }
 
     std::lock_guard<std::mutex> lock(token_mutex_);
     access_token_ = token;
     token_expires_at_ =
-        std::chrono::steady_clock::now() + std::chrono::seconds(expires_in);
+        std::chrono::steady_clock::now() + std::chrono::seconds(*expires_in);
   }
 
   void EnsureAccessToken() {
