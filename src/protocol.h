@@ -20,7 +20,11 @@ nlohmann::json MakeResume(const std::string& access_token,
 std::optional<int> ParseExpiresIn(const nlohmann::json& response);
 std::optional<Message> ParseMessage(const nlohmann::json& payload);
 std::string ReplyPath(const Message& message);
+std::string UploadPath(const Message& message);
 nlohmann::json MakeReplyBody(const Message& message, const std::string& text);
+nlohmann::json MakeImageUploadBody(const std::string& image_url);
+nlohmann::json MakeImageReplyBody(const Message& message,
+                                  const std::string& file_info);
 
 }  // namespace qqbot::internal
 

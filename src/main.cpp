@@ -16,7 +16,11 @@ int main() {
   try {
     qqbot::Client client(app_id, client_secret);
     client.OnMessage([&client](const qqbot::Message& message) {
-      client.Reply(message, message.content);
+      if (message.content.find("图片") == std::string::npos) {
+        client.Reply(message, message.content);
+      } else {
+        client.ReplyImage(message, "https://img2.baidu.com/it/u=3041022324,602489062&fm=253&fmt=auto&app=138&f=PNG?w=281&h=499");
+      }
     });
     client.Run();
   } catch (const std::exception& error) {

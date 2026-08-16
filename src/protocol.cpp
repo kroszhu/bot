@@ -93,11 +93,30 @@ std::string ReplyPath(const Message& message) {
   return "/v2/groups/" + message.target_id + "/messages";
 }
 
+std::string UploadPath(const Message& message) {
+  if (message.source == MessageSource::kDirect) {
+    return "/v2/users/" + message.target_id + "/files";
+  }
+  return "/v2/groups/" + message.target_id + "/files";
+}
+
 nlohmann::json MakeReplyBody(const Message& message, const std::string& text) {
   return {{"content", text},
           {"msg_type", 0},
           {"msg_id", message.id},
           {"msg_seq", 1}};
+}
+
+nlohmann::json MakeImageUploadBody(const std::string& image_url) {
+  return {{"file_type", 1}, {"url", image_url}, {"srv_send_msg", false}};
+}
+
+nlohmann::json MakeImageReplyBody(const Message& message,
+                                  const std::string& file_info) {
+  return {{"msg_type", 7},
+          {"msg_id", message.id},
+          {"msg_seq", 1},
+          {"media", {{"file_info", file_info}}}};
 }
 
 }  // namespace qqbot::internal

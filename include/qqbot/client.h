@@ -28,6 +28,7 @@ class Client {
 
   void OnMessage(MessageHandler handler);
   void Reply(const Message& message, const std::string& text);
+  void ReplyImage(const Message& message, const std::string& image_url);
   void Run();
 
  private:

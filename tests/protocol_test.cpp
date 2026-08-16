@@ -38,6 +38,16 @@ int main() {
   assert(qqbot::internal::ReplyPath(*direct) == "/v2/users/user-id/messages");
   assert(qqbot::internal::MakeReplyBody(*direct, "echo").at("msg_id") ==
          "message-id");
+  assert(qqbot::internal::UploadPath(*direct) == "/v2/users/user-id/files");
+
+  const auto upload_body =
+      qqbot::internal::MakeImageUploadBody("https://example.com/image.jpg");
+  assert(upload_body.at("file_type") == 1);
+  assert(upload_body.at("srv_send_msg") == false);
+  const auto image_reply =
+      qqbot::internal::MakeImageReplyBody(*direct, "file-info");
+  assert(image_reply.at("msg_type") == 7);
+  assert(image_reply.at("media").at("file_info") == "file-info");
 
   const nlohmann::json group_payload = {{"op", 0},
                                         {"t", "GROUP_AT_MESSAGE_CREATE"},
@@ -50,6 +60,7 @@ int main() {
   assert(group.has_value());
   assert(group->source == qqbot::MessageSource::kGroup);
   assert(qqbot::internal::ReplyPath(*group) == "/v2/groups/group-id/messages");
+  assert(qqbot::internal::UploadPath(*group) == "/v2/groups/group-id/files");
 
   auto non_text = direct_payload;
   non_text["d"]["message_type"] = 7;

@@ -102,6 +102,46 @@ class Client::Impl {
     }
   }
 
+  void ReplyImage(const Message& message, const std::string& image_url) {
+    try {
+      EnsureAccessToken();
+      const std::string token = GetAccessToken();
+
+      ix::HttpClient client;
+      ConfigureTls(&client);
+      auto args = client.createRequest();
+      args->extraHeaders["Authorization"] = "QQBot " + token;
+      args->extraHeaders["Content-Type"] = "application/json";
+
+      const auto upload_response =
+          client.post(std::string(kApiBase) + internal::UploadPath(message),
+                      internal::MakeImageUploadBody(image_url).dump(), args);
+      if (!upload_response || upload_response->statusCode < 200 ||
+          upload_response->statusCode >= 300) {
+        const int status = upload_response ? upload_response->statusCode : 0;
+        std::cerr << "Image upload failed, HTTP status: " << status << '\n';
+        return;
+      }
+
+      const auto upload_result = nlohmann::json::parse(upload_response->body);
+      const std::string file_info = upload_result.value("file_info", "");
+      if (file_info.empty()) {
+        throw std::runtime_error("image upload returned no file_info");
+      }
+
+      const auto reply_response = client.post(
+          std::string(kApiBase) + internal::ReplyPath(message),
+          internal::MakeImageReplyBody(message, file_info).dump(), args);
+      if (!reply_response || reply_response->statusCode < 200 ||
+          reply_response->statusCode >= 300) {
+        const int status = reply_response ? reply_response->statusCode : 0;
+        std::cerr << "Image reply failed, HTTP status: " << status << '\n';
+      }
+    } catch (const std::exception& error) {
+      std::cerr << "Image reply failed: " << error.what() << '\n';
+    }
+  }
+
  private:
   void RefreshAccessToken() {
     ix::HttpClient client;
@@ -292,6 +332,10 @@ void Client::OnMessage(MessageHandler handler) {
 
 void Client::Reply(const Message& message, const std::string& text) {
   impl_->Reply(message, text);
+}
+
+void Client::ReplyImage(const Message& message, const std::string& image_url) {
+  impl_->ReplyImage(message, image_url);
 }
 
 void Client::Run() { impl_->Run(); }
