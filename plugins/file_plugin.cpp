@@ -3,17 +3,20 @@
 #include <string>
 
 #include "qqbot/plugin.h"
+#include "qqbot/string_utils.h"
 
 namespace qqbot {
 namespace {
 
 constexpr char kFilePath[] = "data.txt";
 constexpr std::size_t kMaxTextSize = 1024;
+constexpr char kReadCommand[] = "read";
+constexpr char kWriteCommand[] = "write";
 
 class ReadPlugin final : public Plugin {
  public:
   bool CanHandle(const Message& message) const override {
-    return message.content == "read";
+    return Startwith(message.content, kReadCommand);
   }
 
   void OnMessage(Client& client, const Message& message) override {
@@ -39,13 +42,17 @@ class ReadPlugin final : public Plugin {
 class WritePlugin final : public Plugin {
  public:
   bool CanHandle(const Message& message) const override {
-    return message.content == "write" ||
-           message.content.rfind("write ", 0) == 0;
+    return Startwith(message.content, kWriteCommand);
   }
 
   void OnMessage(Client& client, const Message& message) override {
-    const std::string text =
-        message.content.size() > 6 ? message.content.substr(6) : "";
+    std::size_t text_position =
+        message.content.find(kWriteCommand) + sizeof(kWriteCommand) - 1;
+    while (text_position < message.content.size() &&
+           message.content[text_position] == ' ') {
+      ++text_position;
+    }
+    const std::string text = message.content.substr(text_position);
     if (text.empty()) {
       client.Reply(message, "用法：write 文本");
       return;

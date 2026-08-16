@@ -1,12 +1,15 @@
 #include "qqbot/plugin.h"
+#include "qqbot/string_utils.h"
 
 namespace qqbot {
 namespace {
 
+constexpr char kHelpCommand[] = "help";
+
 class HelpPlugin final : public Plugin {
  public:
   bool CanHandle(const Message& message) const override {
-    return message.content == "help";
+    return Startwith(message.content, kHelpCommand);
   }
 
   void OnMessage(Client& client, const Message& message) override {

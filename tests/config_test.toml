@@ -3,4 +3,4 @@ app_id = "test-app-id"
 client_secret = "test-client-secret"
 
 [plugins]
-order = ["help", "read", "write", "image", "echo"]
+order = ["write", "help", "read", "image", "echo"]

@@ -128,6 +128,14 @@ target_compile_options(config_test PRIVATE -Wall -Wextra -Wpedantic -UNDEBUG)
 add_test(NAME config_test COMMAND config_test
   ${CMAKE_CURRENT_SOURCE_DIR}/tests/config_test.toml)
 
+add_executable(string_utils_test tests/string_utils_test.cpp)
+target_include_directories(string_utils_test PRIVATE
+  ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
+target_compile_options(string_utils_test
+  PRIVATE -Wall -Wextra -Wpedantic -UNDEBUG)
+add_test(NAME string_utils_test COMMAND string_utils_test)
+
 find_program(CLANG_FORMAT_EXECUTABLE clang-format)
 if(CLANG_FORMAT_EXECUTABLE)
   file(GLOB_RECURSE FORMAT_SOURCES CONFIGURE_DEPENDS
