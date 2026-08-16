@@ -78,7 +78,7 @@ target_compile_definitions(ixwebsocket
   PRIVATE IXWEBSOCKET_USE_MBED_TLS_MIN_VERSION_3
 )
 
-add_library(qqbot_lib src/client.cpp src/protocol.cpp)
+add_library(qqbot_lib src/client.cpp src/plugin.cpp src/protocol.cpp)
 target_include_directories(qqbot_lib
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
   PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src
@@ -88,7 +88,11 @@ target_link_libraries(qqbot_lib
 )
 target_compile_options(qqbot_lib PRIVATE -Wall -Wextra -Wpedantic)
 
-add_executable(qqbot src/main.cpp)
+add_executable(qqbot
+  src/main.cpp
+  src/plugins/default_plugin.cpp
+  src/plugins/image_plugin.cpp
+)
 target_link_libraries(qqbot PRIVATE qqbot_lib)
 target_compile_options(qqbot PRIVATE -Wall -Wextra -Wpedantic)
 

@@ -27,6 +27,11 @@ export QQBOT_CLIENT_SECRET='your-client-secret'
 The process connects automatically and echoes supported incoming text. Stop it
 with `Ctrl+C`.
 
+Each message is routed to the first plugin whose `CanHandle` method returns
+true. If no plugin matches, the built-in `default` plugin echoes the text.
+New plugins inherit `qqbot::Plugin` and register a static instance with
+`qqbot::PluginRegister`.
+
 ## Format check
 
 ```bash

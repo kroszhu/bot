@@ -4,6 +4,7 @@
 #include <string>
 
 #include "qqbot/client.h"
+#include "qqbot/plugin.h"
 
 int main() {
   const char* app_id = std::getenv("QQBOT_APP_ID");
@@ -16,11 +17,21 @@ int main() {
   try {
     qqbot::Client client(app_id, client_secret);
     client.OnMessage([&client](const qqbot::Message& message) {
-      if (message.content.find("图片") == std::string::npos) {
-        client.Reply(message, message.content);
-      } else {
-        client.ReplyImage(message, "https://img2.baidu.com/it/u=3041022324,602489062&fm=253&fmt=auto&app=138&f=PNG?w=281&h=499");
+      std::string selected_plugin = "default";
+      auto& plugins = qqbot::Plugins();
+      for (const auto& [name, plugin] : plugins) {
+        if (name != "default" && plugin->CanHandle(message)) {
+          selected_plugin = name;
+          break;
+        }
       }
+
+      const auto plugin = plugins.find(selected_plugin);
+      if (plugin == plugins.end()) {
+        std::cerr << "Unknown plugin: " << selected_plugin << '\n';
+        return;
+      }
+      plugin->second->OnMessage(client, message);
     });
     client.Run();
   } catch (const std::exception& error) {
