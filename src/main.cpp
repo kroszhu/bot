@@ -25,8 +25,8 @@ int main() {
     client.OnMessage([&client, plugins](const qqbot::Message& message) {
       for (auto& [name, plugin] : plugins) {
         if (plugin->CanHandle(message)) {
-          std::cout << "Handling message with plugin: " << name << " "
-                    << message.content << " " << message.id << std::endl;
+          std::cout << "Handling message plugin: " << name << "=>"
+                    << message.content << std::endl;
           plugin->OnMessage(client, message);
           return;
         }
