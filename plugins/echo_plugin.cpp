@@ -13,7 +13,7 @@ class EchoPlugin final : public Plugin {
 };
 
 EchoPlugin echo_plugin;
-PluginRegister echo_plugin_register("default", &echo_plugin);
+PluginRegister echo_plugin_register("echo", &echo_plugin);
 
 }  // namespace
 }  // namespace qqbot

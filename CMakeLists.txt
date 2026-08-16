@@ -54,10 +54,18 @@ download_dependency(
   c024334f8e45980836c67008979a884d6dcc5ef067dd2eb1fa7241f4c17ddc32
   IXWebSocket-11.4.6
 )
+download_dependency(
+  tomlplusplus
+  https://github.com/marzer/tomlplusplus/archive/refs/tags/v3.4.0.tar.gz
+  8517f65938a4faae9ccf8ebb36631a38c1cadfb5efa85d9a72e15b9e97d25155
+  tomlplusplus-3.4.0
+)
 
 set(JSON_BuildTests OFF CACHE INTERNAL "")
 add_subdirectory(${nlohmann_json_SOURCE_DIR}
   ${DEPENDENCY_DIR}/build/nlohmann_json EXCLUDE_FROM_ALL)
+add_subdirectory(${tomlplusplus_SOURCE_DIR}
+  ${DEPENDENCY_DIR}/build/tomlplusplus EXCLUDE_FROM_ALL)
 
 set(ENABLE_PROGRAMS OFF CACHE BOOL "" FORCE)
 set(ENABLE_TESTING OFF CACHE BOOL "" FORCE)
@@ -90,7 +98,7 @@ target_compile_options(qqbot_lib PRIVATE -Wall -Wextra -Wpedantic)
 
 file(GLOB PLUGIN_SOURCES CONFIGURE_DEPENDS plugins/*.cpp)
 add_executable(qqbot src/main.cpp ${PLUGIN_SOURCES})
-target_link_libraries(qqbot PRIVATE qqbot_lib)
+target_link_libraries(qqbot PRIVATE qqbot_lib tomlplusplus::tomlplusplus)
 target_compile_options(qqbot PRIVATE -Wall -Wextra -Wpedantic)
 
 enable_testing()

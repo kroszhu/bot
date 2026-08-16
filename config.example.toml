@@ -1,0 +1,6 @@
+[bot]
+app_id = "your-app-id"
+client_secret = "your-client-secret"
+
+[plugins]
+order = ["image", "echo"]

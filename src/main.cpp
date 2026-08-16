@@ -1,28 +1,50 @@
-#include <cstdlib>
 #include <exception>
 #include <iostream>
+#include <stdexcept>
+#include <string>
+#include <toml++/toml.hpp>
+#include <vector>
 
 #include "qqbot/client.h"
 #include "qqbot/plugin.h"
 
 int main() {
-  const char* app_id = std::getenv("QQBOT_APP_ID");
-  const char* client_secret = std::getenv("QQBOT_CLIENT_SECRET");
-  if (app_id == nullptr || client_secret == nullptr) {
-    std::cerr << "QQBOT_APP_ID and QQBOT_CLIENT_SECRET are required.\n";
-    return 1;
-  }
-
   try {
-    qqbot::Client client(app_id, client_secret);
-    client.OnMessage([&client](const qqbot::Message& message) {
-      for (const auto& [name, plugin] : qqbot::Plugins()) {
+    const toml::table config = toml::parse_file("config.toml");
+    const auto app_id = config["bot"]["app_id"].value<std::string>();
+    const auto client_secret =
+        config["bot"]["client_secret"].value<std::string>();
+    if (!app_id || app_id->empty() || !client_secret ||
+        client_secret->empty()) {
+      throw std::runtime_error("bot credentials are required in config.toml");
+    }
+
+    const toml::array* order = config["plugins"]["order"].as_array();
+    if (order == nullptr) {
+      throw std::runtime_error("plugins.order is required in config.toml");
+    }
+
+    std::vector<qqbot::Plugin*> plugins;
+    for (const auto& item : *order) {
+      const auto name = item.value<std::string>();
+      if (!name) {
+        throw std::runtime_error("plugin names must be strings");
+      }
+      const auto plugin = qqbot::Plugins().find(*name);
+      if (plugin == qqbot::Plugins().end()) {
+        throw std::runtime_error("unknown plugin: " + *name);
+      }
+      plugins.push_back(plugin->second);
+    }
+
+    qqbot::Client client(*app_id, *client_secret);
+    client.OnMessage([&client, plugins](const qqbot::Message& message) {
+      for (qqbot::Plugin* plugin : plugins) {
         if (plugin->CanHandle(message)) {
           plugin->OnMessage(client, message);
           return;
         }
       }
-      // 兜底回复：
       client.Reply(message, "收到，但是暂时处理不了，等待升级");
     });
     client.Run();

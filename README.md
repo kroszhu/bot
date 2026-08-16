@@ -16,21 +16,19 @@ ctest --test-dir build --output-on-failure
 ## Run
 
 Create a bot in the QQ Open Platform and enable the `GROUP_AND_C2C_EVENT`
-intent. Keep credentials outside source control:
+intent. Copy the example configuration and fill in the credentials:
 
 ```bash
-export QQBOT_APP_ID='your-app-id'
-export QQBOT_CLIENT_SECRET='your-client-secret'
-./run.sh
+cp config.example.toml config.toml
+./build/qqbot
 ```
 
 The process connects automatically and echoes supported incoming text. Stop it
 with `Ctrl+C`.
 
-Each message is routed to the first plugin whose `CanHandle` method returns
-true. If no plugin matches, the built-in `default` plugin echoes the text.
-New plugins inherit `qqbot::Plugin` and register a static instance with
-`qqbot::PluginRegister`.
+The `plugins.order` array controls plugin matching order. Each message is routed
+to the first plugin whose `CanHandle` method returns true. New plugins inherit
+`qqbot::Plugin` and register a static instance with `qqbot::PluginRegister`.
 
 ## Format check
 
