@@ -11,19 +11,20 @@
 int main() {
   try {
     const qqbot::Config config("config.toml");
-    std::vector<qqbot::Plugin*> plugins;
+    std::vector<std::pair<std::string, qqbot::Plugin*>> plugins;
     for (const std::string& name : config.Plugins().order) {
       const auto plugin = qqbot::Plugins().find(name);
       if (plugin == qqbot::Plugins().end()) {
         throw std::runtime_error("unknown plugin: " + name);
       }
-      plugins.push_back(plugin->second);
+      plugins.emplace_back(name, plugin->second);
     }
 
     qqbot::Client client(config.Bot().app_id, config.Bot().client_secret);
     client.OnMessage([&client, plugins](const qqbot::Message& message) {
-      for (qqbot::Plugin* plugin : plugins) {
+      for (auto& [name, plugin] : plugins) {
         if (plugin->CanHandle(message)) {
+          std::cout << "Handling message with plugin: " << name << " " << message.content << " " << message.id << std::endl;
           plugin->OnMessage(client, message);
           return;
         }
