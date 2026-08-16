@@ -21,7 +21,7 @@ intent. Keep credentials outside source control:
 ```bash
 export QQBOT_APP_ID='your-app-id'
 export QQBOT_CLIENT_SECRET='your-client-secret'
-./build/qqbot
+./run.sh
 ```
 
 The process connects automatically and echoes supported incoming text. Stop it
