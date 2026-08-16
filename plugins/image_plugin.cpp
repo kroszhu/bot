@@ -4,7 +4,7 @@
 namespace qqbot {
 namespace {
 
-constexpr char kImageCommand[] = "图片";
+constexpr char kImageCommand[] = "image";
 constexpr char kImageUrl[] =
     "https://img2.baidu.com/it/u=3041022324,602489062&fm=253&fmt=auto&app="
     "138&f=PNG?w=281&h=499";
@@ -21,7 +21,7 @@ class ImagePlugin final : public Plugin {
 };
 
 ImagePlugin image_plugin;
-PluginRegister image_plugin_register("image", &image_plugin);
+PluginRegister image_plugin_register(kImageCommand, &image_plugin);
 
 }  // namespace
 }  // namespace qqbot

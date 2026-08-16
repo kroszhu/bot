@@ -18,13 +18,13 @@ class HelpPlugin final : public Plugin {
                  "help：查看帮助\n"
                  "read：读取 data.txt\n"
                  "write 文本：覆盖写入，最多1024字节\n"
-                 "图片：回复一张图片\n"
+                 "image：回复一张图片\n"
                  "其他文本：原文回复");
   }
 };
 
 HelpPlugin help_plugin;
-PluginRegister help_plugin_register("help", &help_plugin);
+PluginRegister help_plugin_register(kHelpCommand, &help_plugin);
 
 }  // namespace
 }  // namespace qqbot

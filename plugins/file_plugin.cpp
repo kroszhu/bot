@@ -73,9 +73,9 @@ class WritePlugin final : public Plugin {
 };
 
 ReadPlugin read_plugin;
-PluginRegister read_plugin_register("read", &read_plugin);
+PluginRegister read_plugin_register(kReadCommand, &read_plugin);
 WritePlugin write_plugin;
-PluginRegister write_plugin_register("write", &write_plugin);
+PluginRegister write_plugin_register(kWriteCommand, &write_plugin);
 
 }  // namespace
 }  // namespace qqbot
