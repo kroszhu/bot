@@ -4,3 +4,6 @@ client_secret = "your-client-secret"
 
 [plugins]
 order = ["write", "help", "read", "image", "customer_service", "echo"]
+
+[customer_service]
+key = "replace-with-a-random-key"

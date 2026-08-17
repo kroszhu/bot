@@ -31,9 +31,19 @@ Use `help` to view the available commands, `read` to read `data.txt`, or
 
 Customer service questions and answers are stored in `faq.txt`, one
 `question=answer` pair per line. The first question containing the user's input
-provides the reply. The bot downloads the latest file from GitHub Raw at
-startup. Send `faq-refresh` to download it again; manual refreshes are limited
-to once per minute. If a download fails, the existing cached data is retained.
+provides the reply. Set a private random TextDB key in `config.toml`, then upload
+the file with:
+
+```bash
+curl --location --post301 -X POST https://textdb.online/update/ \
+  --data-urlencode "key=your-random-key" \
+  --data-urlencode "value@faq.txt"
+```
+
+The bot downloads the latest data from TextDB at startup. Send `faq-refresh` to
+download it again; manual refreshes are limited to once per minute. If a
+download fails, the existing cached data is retained. TextDB removes free
+records that have not been accessed or updated for 30 days.
 
 The `plugins.order` array controls plugin matching order. Each message is routed
 to the first plugin whose `CanHandle` method returns true. New plugins inherit

@@ -15,16 +15,22 @@ struct PluginsConfig {
   std::vector<std::string> order;
 };
 
+struct CustomerServiceConfig {
+  std::string key;
+};
+
 class Config {
  public:
   explicit Config(const std::string& path);
 
   const BotConfig& Bot() const;
   const PluginsConfig& Plugins() const;
+  const CustomerServiceConfig& CustomerService() const;
 
  private:
   BotConfig bot_;
   PluginsConfig plugins_;
+  CustomerServiceConfig customer_service_;
 };
 
 }  // namespace qqbot

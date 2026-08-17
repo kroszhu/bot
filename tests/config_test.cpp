@@ -16,5 +16,6 @@ int main(int argc, char* argv[]) {
   assert(config.Plugins().order[3] == "image");
   assert(config.Plugins().order[4] == "customer_service");
   assert(config.Plugins().order[5] == "echo");
+  assert(config.CustomerService().key == "1234567890abcdefghij");
   return 0;
 }

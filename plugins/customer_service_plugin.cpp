@@ -12,6 +12,7 @@
 #include <utility>
 #include <vector>
 
+#include "qqbot/config.h"
 #include "qqbot/plugin.h"
 #include "qqbot/string_utils.h"
 
@@ -21,8 +22,7 @@ namespace {
 constexpr char kPluginName[] = "customer_service";
 constexpr char kRefreshCommand[] = "faq-refresh";
 constexpr char kFaqFilePath[] = "faq.txt";
-constexpr char kFaqUrl[] =
-    "https://raw.githubusercontent.com/kroszhu/bot/master/faq.txt";
+constexpr char kFaqBaseUrl[] = "https://textdb.online/";
 constexpr char kCaBundle[] = "/etc/ssl/certs/ca-certificates.crt";
 constexpr int kHttpTimeoutSeconds = 5;
 constexpr auto kRefreshLimit = std::chrono::seconds(60);
@@ -58,7 +58,10 @@ class CustomerServicePlugin final : public Plugin {
     faq_ = ParseFaq(file);
   }
 
-  void Initialize() override { Refresh(); }
+  void Initialize(const Config& config) override {
+    faq_url_ = std::string(kFaqBaseUrl) + config.CustomerService().key;
+    Refresh();
+  }
 
   bool CanHandle(const Message& message) const override {
     return Startwith(message.content, kRefreshCommand) ||
@@ -105,7 +108,7 @@ class CustomerServicePlugin final : public Plugin {
     args->transferTimeout = kHttpTimeoutSeconds;
     args->extraHeaders["Cache-Control"] = "no-cache";
     args->extraHeaders["User-Agent"] = "qqbot/0.1";
-    const auto response = client.get(kFaqUrl, args);
+    const auto response = client.get(faq_url_, args);
     if (!response || response->statusCode != 200) {
       const int status = response ? response->statusCode : 0;
       std::cerr << "FAQ download failed, HTTP status: " << status << '\n';
@@ -123,7 +126,7 @@ class CustomerServicePlugin final : public Plugin {
       std::lock_guard<std::mutex> lock(mutex_);
       faq_ = std::move(new_faq);
     }
-    std::cout << "FAQ loaded from GitHub Raw.\n";
+    std::cout << "FAQ loaded from TextDB.\n";
     return true;
   }
 
@@ -148,6 +151,7 @@ class CustomerServicePlugin final : public Plugin {
 
   mutable std::mutex mutex_;
   Faq faq_;
+  std::string faq_url_;
   std::optional<std::chrono::steady_clock::time_point> last_manual_refresh_;
 };
 
