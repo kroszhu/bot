@@ -9,6 +9,7 @@
 #include <chrono>
 #include <condition_variable>
 #include <cstdint>
+#include <ctime>
 #include <iostream>
 #include <mutex>
 #include <nlohmann/json.hpp>
@@ -32,6 +33,18 @@ void ConfigureTls(ix::HttpClient* client) {
   ix::SocketTLSOptions options;
   options.caFile = kCaBundle;
   client->setTLSOptions(options);
+}
+
+std::string CurrentLocalTime() {
+  const std::time_t current_time = std::time(nullptr);
+  std::tm local_time = {};
+  if (localtime_r(&current_time, &local_time) == nullptr) {
+    return "unknown time";
+  }
+
+  char buffer[20] = {};
+  std::strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", &local_time);
+  return buffer;
 }
 
 }  // namespace
@@ -197,7 +210,8 @@ class Client::Impl {
       return;
     }
     if (event->type == ix::WebSocketMessageType::Close) {
-      std::cerr << "Gateway disconnected, code: " << event->closeInfo.code
+      std::cerr << '[' << CurrentLocalTime()
+                << "] Gateway disconnected, code: " << event->closeInfo.code
                 << '\n';
       return;
     }

@@ -11,6 +11,7 @@ namespace qqbot {
 class Plugin {
  public:
   virtual ~Plugin() = default;
+  virtual void Initialize() {}
   virtual bool CanHandle(const Message& message) const = 0;
   virtual void OnMessage(Client& client, const Message& message) = 0;
 };

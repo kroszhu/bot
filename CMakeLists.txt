@@ -106,7 +106,7 @@ target_compile_options(qqbot_lib PRIVATE -Wall -Wextra -Wpedantic)
 
 file(GLOB PLUGIN_SOURCES CONFIGURE_DEPENDS plugins/*.cpp)
 add_executable(qqbot src/main.cpp ${PLUGIN_SOURCES})
-target_link_libraries(qqbot PRIVATE qqbot_lib)
+target_link_libraries(qqbot PRIVATE qqbot_lib ixwebsocket)
 target_compile_options(qqbot PRIVATE -Wall -Wextra -Wpedantic)
 
 enable_testing()

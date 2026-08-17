@@ -19,6 +19,8 @@ class HelpPlugin final : public Plugin {
                  "read：读取 data.txt\n"
                  "write 文本：覆盖写入，最多1024字节\n"
                  "image：回复一张图片\n"
+                 "客服问答：直接输入问题\n"
+                 "faq-refresh：刷新客服问答\n"
                  "其他文本：原文回复");
   }
 };

@@ -22,6 +22,9 @@ int main() {
     }
 
     qqbot::Client client(config.Bot().app_id, config.Bot().client_secret);
+    for (const auto& plugin : plugins) {
+      plugin.second->Initialize();
+    }
     client.OnMessage([&client, plugins](const qqbot::Message& message) {
       for (auto& [name, plugin] : plugins) {
         if (plugin->CanHandle(message)) {
