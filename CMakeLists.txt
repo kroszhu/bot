@@ -72,6 +72,13 @@ set(ENABLE_TESTING OFF CACHE BOOL "" FORCE)
 add_subdirectory(${mbedtls_SOURCE_DIR}
   ${DEPENDENCY_DIR}/build/mbedtls EXCLUDE_FROM_ALL)
 
+foreach(tgt mbedtls mbedx509 mbedcrypto)
+  if(TARGET ${tgt})
+    target_compile_options(${tgt} PRIVATE
+      -Wno-unterminated-string-initialization)
+  endif()
+endforeach()
+
 set(USE_TLS ON CACHE BOOL "" FORCE)
 set(USE_MBED_TLS ON CACHE BOOL "" FORCE)
 set(MBEDTLS_FOUND TRUE)
