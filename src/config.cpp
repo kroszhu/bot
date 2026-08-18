@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cctype>
+#include <limits>
 #include <stdexcept>
 #include <string>
 #include <toml++/toml.hpp>
@@ -48,6 +49,17 @@ Config::Config(const std::string& path) {
         "customer_service.key must contain 20-60 letters, digits, '-' or '_'");
   }
   customer_service_.key = std::move(*key);
+
+  auto base_url = config["llm"]["base_url"].value<std::string>();
+  auto timeout = config["llm"]["timeout"].value<std::int64_t>();
+  if (!base_url || base_url->empty()) {
+    throw std::runtime_error("llm.base_url must not be empty");
+  }
+  if (!timeout || *timeout <= 0 || *timeout > std::numeric_limits<int>::max()) {
+    throw std::runtime_error("llm.timeout must be a positive integer");
+  }
+  llm_.base_url = std::move(*base_url);
+  llm_.timeout = static_cast<int>(*timeout);
 }
 
 const BotConfig& Config::Bot() const { return bot_; }
@@ -57,5 +69,7 @@ const PluginsConfig& Config::Plugins() const { return plugins_; }
 const CustomerServiceConfig& Config::CustomerService() const {
   return customer_service_;
 }
+
+const LlmConfig& Config::Llm() const { return llm_; }
 
 }  // namespace qqbot

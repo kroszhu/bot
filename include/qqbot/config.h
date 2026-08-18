@@ -19,6 +19,11 @@ struct CustomerServiceConfig {
   std::string key;
 };
 
+struct LlmConfig {
+  std::string base_url;
+  int timeout;
+};
+
 class Config {
  public:
   explicit Config(const std::string& path);
@@ -26,11 +31,13 @@ class Config {
   const BotConfig& Bot() const;
   const PluginsConfig& Plugins() const;
   const CustomerServiceConfig& CustomerService() const;
+  const LlmConfig& Llm() const;
 
  private:
   BotConfig bot_;
   PluginsConfig plugins_;
   CustomerServiceConfig customer_service_;
+  LlmConfig llm_;
 };
 
 }  // namespace qqbot

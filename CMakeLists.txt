@@ -89,6 +89,7 @@ target_compile_definitions(ixwebsocket
 add_library(qqbot_lib
   src/client.cpp
   src/config.cpp
+  src/llm_protocol.cpp
   src/plugin.cpp
   src/protocol.cpp
 )
@@ -106,7 +107,12 @@ target_compile_options(qqbot_lib PRIVATE -Wall -Wextra -Wpedantic)
 
 file(GLOB PLUGIN_SOURCES CONFIGURE_DEPENDS plugins/*.cpp)
 add_executable(qqbot src/main.cpp ${PLUGIN_SOURCES})
-target_link_libraries(qqbot PRIVATE qqbot_lib ixwebsocket)
+target_include_directories(qqbot PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
+target_link_libraries(qqbot PRIVATE
+  qqbot_lib
+  ixwebsocket
+  nlohmann_json::nlohmann_json
+)
 target_compile_options(qqbot PRIVATE -Wall -Wextra -Wpedantic)
 
 enable_testing()
@@ -135,6 +141,18 @@ target_include_directories(string_utils_test PRIVATE
 target_compile_options(string_utils_test
   PRIVATE -Wall -Wextra -Wpedantic -UNDEBUG)
 add_test(NAME string_utils_test COMMAND string_utils_test)
+
+add_executable(llm_protocol_test
+  tests/llm_protocol_test.cpp
+  src/llm_protocol.cpp
+)
+target_include_directories(llm_protocol_test PRIVATE
+  ${CMAKE_CURRENT_SOURCE_DIR}/src
+)
+target_link_libraries(llm_protocol_test PRIVATE nlohmann_json::nlohmann_json)
+target_compile_options(llm_protocol_test
+  PRIVATE -Wall -Wextra -Wpedantic -UNDEBUG)
+add_test(NAME llm_protocol_test COMMAND llm_protocol_test)
 
 find_program(CLANG_FORMAT_EXECUTABLE clang-format)
 if(CLANG_FORMAT_EXECUTABLE)

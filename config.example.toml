@@ -3,7 +3,11 @@ app_id = "your-app-id"
 client_secret = "your-client-secret"
 
 [plugins]
-order = ["write", "help", "read", "image", "customer_service", "echo"]
+order = ["write", "help", "read", "image", "customer_service", "llm", "echo"]
 
 [customer_service]
 key = "replace-with-a-random-key"
+
+[llm]
+base_url = "http://192.168.1.20:8998"
+timeout = 30

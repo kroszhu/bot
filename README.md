@@ -49,6 +49,31 @@ The `plugins.order` array controls plugin matching order. Each message is routed
 to the first plugin whose `CanHandle` method returns true. New plugins inherit
 `qqbot::Plugin` and register a static instance with `qqbot::PluginRegister`.
 
+## Local LLM
+
+The `llm` plugin sends messages that were not answered by customer service to a
+separately running MiniMind OpenAI-compatible server. Start it in the model
+environment (not in the bot process):
+
+```bash
+cd model/scripts
+python serve_openai_api.py --load_from ../minimind-3 --device cuda
+```
+
+Configure the address reachable from the bot environment:
+
+```toml
+[llm]
+base_url = "http://192.168.1.20:8998"
+timeout = 30
+```
+
+Allow TCP port 8998 between the environments. The model server and bot remain
+independent, so either process can fail or run out of memory without terminating
+the other. Each request currently contains only the latest user message; chat
+history and streaming are not supported yet. If the model request fails, the
+plugin logs the failure and echoes the original message.
+
 ## Format check
 
 ```bash
