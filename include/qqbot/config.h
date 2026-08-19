@@ -1,5 +1,4 @@
-#ifndef QQBOT_CONFIG_H_
-#define QQBOT_CONFIG_H_
+#pragma once
 
 #include <string>
 #include <vector>
@@ -41,5 +40,3 @@ class Config {
 };
 
 }  // namespace qqbot
-
-#endif  // QQBOT_CONFIG_H_

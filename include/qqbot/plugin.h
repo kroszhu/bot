@@ -1,5 +1,4 @@
-#ifndef QQBOT_PLUGIN_H_
-#define QQBOT_PLUGIN_H_
+#pragma once
 
 #include <map>
 #include <string>
@@ -26,5 +25,3 @@ class PluginRegister {
 };
 
 }  // namespace qqbot
-
-#endif  // QQBOT_PLUGIN_H_

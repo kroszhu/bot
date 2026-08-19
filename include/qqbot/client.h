@@ -1,5 +1,4 @@
-#ifndef QQBOT_CLIENT_H_
-#define QQBOT_CLIENT_H_
+#pragma once
 
 #include <functional>
 #include <memory>
@@ -37,5 +36,3 @@ class Client {
 };
 
 }  // namespace qqbot
-
-#endif  // QQBOT_CLIENT_H_

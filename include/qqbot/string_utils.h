@@ -1,5 +1,4 @@
-#ifndef QQBOT_STRING_UTILS_H_
-#define QQBOT_STRING_UTILS_H_
+#pragma once
 
 #include <cstddef>
 #include <string_view>
@@ -12,5 +11,3 @@ inline bool Startwith(std::string_view source, std::string_view target) {
 }
 
 }  // namespace qqbot
-
-#endif  // QQBOT_STRING_UTILS_H_

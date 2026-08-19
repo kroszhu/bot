@@ -1,5 +1,4 @@
-#ifndef QQBOT_TLS_UTILS_H_
-#define QQBOT_TLS_UTILS_H_
+#pragma once
 
 #include <fstream>
 #include <stdexcept>
@@ -11,10 +10,10 @@ namespace qqbot {
 inline const std::string& CaBundlePath() {
   static const std::string path = [] {
     static constexpr const char* kCandidates[] = {
-        "/etc/ssl/certs/ca-certificates.crt",        // Debian/Ubuntu/Alpine
-        "/etc/ssl/certs/ca-bundle.crt",              // CentOS/RHEL
-        "/etc/pki/tls/certs/ca-bundle.crt",          // Fedora/RHEL
-        "/etc/ssl/cert.pem",                         // macOS / some BSD
+        "/etc/ssl/certs/ca-certificates.crt",  // Debian/Ubuntu/Alpine
+        "/etc/ssl/certs/ca-bundle.crt",        // CentOS/RHEL
+        "/etc/pki/tls/certs/ca-bundle.crt",    // Fedora/RHEL
+        "/etc/ssl/cert.pem",                   // macOS / some BSD
         "/opt/homebrew/etc/ca-certificates/cert.pem",
         "/usr/local/etc/openssl@3/cert.pem",
         "/usr/local/etc/openssl/cert.pem",
@@ -32,5 +31,3 @@ inline const std::string& CaBundlePath() {
 }
 
 }  // namespace qqbot
-
-#endif  // QQBOT_TLS_UTILS_H_
