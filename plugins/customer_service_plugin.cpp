@@ -15,6 +15,7 @@
 #include "qqbot/config.h"
 #include "qqbot/plugin.h"
 #include "qqbot/string_utils.h"
+#include "qqbot/tls_utils.h"
 
 namespace qqbot {
 namespace {
@@ -23,7 +24,6 @@ constexpr char kPluginName[] = "customer_service";
 constexpr char kRefreshCommand[] = "faq-refresh";
 constexpr char kFaqFilePath[] = "faq.txt";
 constexpr char kFaqBaseUrl[] = "https://textdb.online/";
-constexpr char kCaBundle[] = "/etc/ssl/certs/ca-certificates.crt";
 constexpr int kHttpTimeoutSeconds = 5;
 constexpr auto kRefreshLimit = std::chrono::seconds(60);
 
@@ -100,7 +100,7 @@ class CustomerServicePlugin final : public Plugin {
   bool Refresh() {
     ix::HttpClient client;
     ix::SocketTLSOptions tls_options;
-    tls_options.caFile = kCaBundle;
+    tls_options.caFile = CaBundlePath();
     client.setTLSOptions(tls_options);
 
     auto args = client.createRequest();

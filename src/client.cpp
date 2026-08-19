@@ -20,18 +20,18 @@
 #include <utility>
 
 #include "protocol.h"
+#include "qqbot/tls_utils.h"
 
 namespace qqbot {
 namespace {
 
 constexpr char kApiBase[] = "https://api.bot.qq.com";
 constexpr char kGatewayUrl[] = "wss://api.bot.qq.com/websocket/";
-constexpr char kCaBundle[] = "/etc/ssl/certs/ca-certificates.crt";
 constexpr auto kRefreshMargin = std::chrono::seconds(60);
 
 void ConfigureTls(ix::HttpClient* client) {
   ix::SocketTLSOptions options;
-  options.caFile = kCaBundle;
+  options.caFile = CaBundlePath();
   client->setTLSOptions(options);
 }
 
@@ -81,7 +81,7 @@ class Client::Impl {
     RefreshAccessToken();
     websocket_.setUrl(kGatewayUrl);
     ix::SocketTLSOptions tls_options;
-    tls_options.caFile = kCaBundle;
+    tls_options.caFile = CaBundlePath();
     websocket_.setTLSOptions(tls_options);
     websocket_.enableAutomaticReconnection();
     websocket_.setOnMessageCallback(
