@@ -1,5 +1,5 @@
-#include <cstddef>
 #include <fstream>
+#include <iterator>
 #include <string>
 
 #include "qqbot/plugin.h"
@@ -9,7 +9,6 @@ namespace qqbot {
 namespace {
 
 constexpr char kFilePath[] = "data.txt";
-constexpr std::size_t kMaxTextSize = 1024;
 constexpr char kReadCommand[] = "read";
 constexpr char kWriteCommand[] = "write";
 
@@ -26,12 +25,8 @@ class ReadPlugin final : public Plugin {
       return;
     }
 
-    std::string text(kMaxTextSize + 1, '\0');
-    file.read(text.data(), static_cast<std::streamsize>(text.size()));
-    text.resize(static_cast<std::size_t>(file.gcount()));
-    if (text.size() > kMaxTextSize) {
-      client.Reply(message, "文件内容超过1024字节");
-    } else if (text.empty()) {
+    const std::string text(std::istreambuf_iterator<char>(file), {});
+    if (text.empty()) {
       client.Reply(message, "文件为空");
     } else {
       client.Reply(message, text);
@@ -57,11 +52,6 @@ class WritePlugin final : public Plugin {
       client.Reply(message, "用法：write 文本");
       return;
     }
-    if (text.size() > kMaxTextSize) {
-      client.Reply(message, "写入内容不能超过1024字节");
-      return;
-    }
-
     std::ofstream file(kFilePath, std::ios::binary | std::ios::trunc);
     file.write(text.data(), static_cast<std::streamsize>(text.size()));
     if (!file) {

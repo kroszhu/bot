@@ -27,7 +27,7 @@ The process connects automatically and echoes supported incoming text. Stop it
 with `Ctrl+C`.
 
 Use `help` to view the available commands, `read` to read `data.txt`, or
-`write text` to overwrite it. File content is limited to 1024 bytes.
+`write text` to overwrite it. Text replies are limited to 1024 UTF-8 bytes.
 
 Customer service questions and answers are stored in `faq.txt`, one
 `question=answer` pair per line. The first question containing the user's input

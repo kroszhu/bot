@@ -20,6 +20,7 @@
 #include <utility>
 
 #include "protocol.h"
+#include "qqbot/string_utils.h"
 #include "qqbot/tls_utils.h"
 
 namespace qqbot {
@@ -27,6 +28,7 @@ namespace {
 
 constexpr char kApiBase[] = "https://api.bot.qq.com";
 constexpr char kGatewayUrl[] = "wss://api.bot.qq.com/websocket/";
+constexpr std::size_t kMaxReplyBytes = 1024;
 constexpr auto kRefreshMargin = std::chrono::seconds(60);
 
 void ConfigureTls(ix::HttpClient* client) {
@@ -95,6 +97,7 @@ class Client::Impl {
 
   void Reply(const Message& message, const std::string& text) {
     try {
+      const std::string reply_text = TruncateUtf8(text, kMaxReplyBytes);
       EnsureAccessToken();
       const std::string token = GetAccessToken();
       ix::HttpClient client;
@@ -102,9 +105,9 @@ class Client::Impl {
       auto args = client.createRequest();
       args->extraHeaders["Authorization"] = "QQBot " + token;
       args->extraHeaders["Content-Type"] = "application/json";
-      const auto response =
-          client.post(std::string(kApiBase) + internal::ReplyPath(message),
-                      internal::MakeReplyBody(message, text).dump(), args);
+      const auto response = client.post(
+          std::string(kApiBase) + internal::ReplyPath(message),
+          internal::MakeReplyBody(message, reply_text).dump(), args);
       if (!response || response->statusCode < 200 ||
           response->statusCode >= 300) {
         const int status = response ? response->statusCode : 0;
