@@ -7,13 +7,13 @@
 #include "llm_protocol.h"
 #include "qqbot/config.h"
 #include "qqbot/plugin.h"
+#include "qqbot/tls_utils.h"
 
 namespace qqbot {
 namespace {
 
 constexpr char kPluginName[] = "llm";
 constexpr char kChatCompletionsPath[] = "/v1/chat/completions";
-constexpr char kCaBundle[] = "/etc/ssl/certs/ca-certificates.crt";
 
 class LlmPlugin final : public Plugin {
  public:
@@ -30,7 +30,7 @@ class LlmPlugin final : public Plugin {
   void OnMessage(Client& client, const Message& message) override {
     ix::HttpClient http_client;
     ix::SocketTLSOptions tls_options;
-    tls_options.caFile = kCaBundle;
+    tls_options.caFile = CaBundlePath();
     http_client.setTLSOptions(tls_options);
 
     auto args = http_client.createRequest();
