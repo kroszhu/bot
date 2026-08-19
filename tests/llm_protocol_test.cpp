@@ -13,12 +13,11 @@ int main() {
 
   const std::string success =
       R"({"choices":[{"message":{"role":"assistant","content":"您好"}}]})";
-  const auto answer = qqbot::internal::ParseLlmResponse(200, success);
+  const auto answer = qqbot::internal::ParseLlmResponse(success);
   assert(answer && *answer == "您好");
-  assert(!qqbot::internal::ParseLlmResponse(500, success));
-  assert(!qqbot::internal::ParseLlmResponse(200, "not json"));
-  assert(!qqbot::internal::ParseLlmResponse(200, R"({"choices":[]})"));
+  assert(!qqbot::internal::ParseLlmResponse("not json"));
+  assert(!qqbot::internal::ParseLlmResponse(R"({"choices":[]})"));
   assert(!qqbot::internal::ParseLlmResponse(
-      200, R"({"choices":[{"message":{"content":""}}]})"));
+      R"({"choices":[{"message":{"content":""}}]})"));
   return 0;
 }

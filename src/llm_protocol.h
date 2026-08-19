@@ -9,8 +9,7 @@ namespace qqbot {
 namespace internal {
 
 nlohmann::json MakeLlmRequest(const std::string& content);
-std::optional<std::string> ParseLlmResponse(int status_code,
-                                            const std::string& body);
+std::optional<std::string> ParseLlmResponse(const std::string& body);
 
 }  // namespace internal
 }  // namespace qqbot

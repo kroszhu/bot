@@ -11,11 +11,7 @@ nlohmann::json MakeLlmRequest(const std::string& content) {
           {"stream", false}};
 }
 
-std::optional<std::string> ParseLlmResponse(int status_code,
-                                            const std::string& body) {
-  if (status_code < 200 || status_code >= 300) {
-    return std::nullopt;
-  }
+std::optional<std::string> ParseLlmResponse(const std::string& body) {
   try {
     const auto response = nlohmann::json::parse(body);
     const auto& content =

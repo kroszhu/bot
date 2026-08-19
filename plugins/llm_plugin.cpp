@@ -40,16 +40,21 @@ class LlmPlugin final : public Plugin {
     const auto response = http_client.post(
         base_url_ + kChatCompletionsPath,
         internal::MakeLlmRequest(message.content).dump(), args);
-    const int status = response ? response->statusCode : 0;
-    const auto answer = response
-                            ? internal::ParseLlmResponse(status, response->body)
-                            : std::nullopt;
+    if (!response || response->statusCode < 200 ||
+        response->statusCode >= 300) {
+      std::cerr << "LLM request failed, HTTP status: "
+                << (response ? response->statusCode : 0) << '\n';
+      client.Reply(message, message.content);
+      return;
+    }
+
+    const auto answer = internal::ParseLlmResponse(response->body);
     if (answer) {
       client.Reply(message, *answer);
       return;
     }
 
-    std::cerr << "LLM request failed, HTTP status: " << status << '\n';
+    std::cerr << "LLM response is invalid\n";
     client.Reply(message, message.content);
   }
 
